@@ -1,4 +1,4 @@
-use bmp;
+use bmp::{self, Image};
 use std::io::{stdout, Write};
 
 fn draw_pixel(mut image: bmp::Image) -> bmp::Image {
@@ -34,20 +34,40 @@ fn draw_x(mut image: bmp::Image) -> bmp::Image {
     return image;
 }
 
+fn avg(i1: bmp::Image, i2: bmp::Image) -> bmp::Image {
+    if i1.get_width() != i2.get_width() || i1.get_height() != i2.get_height() {
+        panic!("images not same size");
+    }
+
+    let mut image = bmp::Image::new(i1.get_width(), i1.get_height());
+
+    for (x, y) in image.coordinates() {
+        let p1 = i1.get_pixel(x, y);
+        let p2 = i2.get_pixel(x, y);
+
+        let r = (p1.r + p2.r) / 2;
+        let g = (p1.g + p2.g) / 2;
+        let b = (p1.b + p2.b) / 2;
+
+        image.set_pixel(x, y, bmp::Pixel::new(r, g, b));
+    }
+    return image;
+}
+
 fn main() {
     let path = std::env::args().nth(1).expect("You must provide a path.");
     let path2 = std::env::args().nth(2);
-    let args_numb = if path2.is_none() { 1 } else { 2 };
     let mut image = match bmp::open(path.as_str()) {
         Ok(i) => i,
         Err(_) => bmp::Image::new(100, 100),
     };
-    if args_numb == 2 {
-        let mut image2 = match bmp::open(path2.unwrap()) {
-            Ok(i) => i,
-            Err(_) => bmp::Image::new(100, 100),
-        };
-    }
+    let image2: Option<Image> = match path2 {
+        Some(s) => match bmp::open(s.as_str()) {
+            Ok(i) => Some(i),
+            Err(_) => Some(bmp::Image::new(100, 100)),
+        },
+        None => None,
+    };
 
     print!("Which operation? ");
     // We use "flush" so that we see the question before the answer.
@@ -60,6 +80,10 @@ fn main() {
         "pixel\n" => draw_pixel(image),
         "diagonal\n" => draw_diagonal(image),
         "x\n" => draw_x(image),
+        "avg\n" => match image2 {
+            Some(i) => avg(image, i),
+            None => panic!("no second image"),
+        },
         _ => {
             panic!("The operation {op} was not recognized!");
         }
