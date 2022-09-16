@@ -9,13 +9,18 @@ fn draw_pixel(mut image: bmp::Image) -> bmp::Image {
 
 fn draw_diagonal(mut image: bmp::Image) -> bmp::Image {
 
+    if image.get_width() != image.get_height() {
+        panic!("canvas not square");
+    }
+
+
     for (x, y) in image.coordinates() {
         if x == y {
             image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
         }
     }
     
-
+    
     return image;
 }
 
