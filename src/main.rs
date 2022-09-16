@@ -1,14 +1,10 @@
 use bmp;
 use std::io::{stdout, Write};
 
-fn draw_pixel(path: &str) {
-    let mut image = match bmp::open(path) {
-        Ok(i) => i,
-        Err(_) => bmp::Image::new(100, 100)
-    };
+fn draw_pixel(image: &bmp::Image) -> &bmp::Image {
     image.set_pixel(50, 50, bmp::Pixel::new(255, 255, 255));
 
-    image.save(path).expect("This should save correctly.");
+    return image;
 }
 
 fn main() {
@@ -21,11 +17,18 @@ fn main() {
     let mut op = String::new();
     std::io::stdin().read_line(&mut op).unwrap();
 
-    match op.as_str() {
-        "pixel\n" => draw_pixel(path.as_str()),
+    let mut image = match bmp::open(path.as_str()) {
+        Ok(i) => i,
+        Err(_) => bmp::Image::new(100, 100)
+    };
+
+    image = match op.as_str() {
+        "pixel\n" => draw_pixel(&mut image),
         _ =>  {
             eprintln!("The operation {op} was not recognised!");
         },
-    }
 
+    };
+
+    image.save(path).expect("This should save correctly.");
 }
