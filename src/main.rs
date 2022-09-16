@@ -61,7 +61,7 @@ fn main() {
         "diagonal\n" => draw_diagonal(image),
         "x\n" => draw_x(image),
         _ => {
-            panic!("The operation {op} was not recognised!");
+            panic!("The operation {op} was not recognized!");
         }
     };
 
