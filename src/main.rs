@@ -37,7 +37,7 @@ fn draw_x(mut image: bmp::Image) -> bmp::Image {
 fn main() {
     let path = std::env::args().nth(1).expect("You must provide a path.");
     let path2 = std::env::args().nth(2);
-    let args_numb = if path2.is_none() { 2 } else { 1 };
+    let args_numb = if path2.is_none() { 1 } else { 2 };
     let mut image = match bmp::open(path.as_str()) {
         Ok(i) => i,
         Err(_) => bmp::Image::new(100, 100),
