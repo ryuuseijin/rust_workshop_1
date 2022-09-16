@@ -111,6 +111,25 @@ fn avg(i1: bmp::Image, i2: bmp::Image) -> bmp::Image {
     image
 }
 
+fn switch_rows(i1: bmp::Image, i2: bmp::Image) -> bmp::Image {
+    if i1.get_width() != i2.get_width() || i1.get_height() != i2.get_height() {
+        panic!("images not same size");
+    }
+
+    let mut image = bmp::Image::new(i1.get_width(), i1.get_height());
+
+    for (x, y) in image.coordinates() {
+        let p = if y % 2 == 0 {
+            i1.get_pixel(x, y)
+        } else {
+            i2.get_pixel(x, y)
+        };
+
+        image.set_pixel(x, y, p);
+    }
+    image
+}
+
 fn main() {
     let path = std::env::args().nth(1).expect("You must provide a path.");
     let path2 = std::env::args().nth(2);
@@ -139,6 +158,10 @@ fn main() {
         "x\n" => draw_x(image),
         "avg\n" => match image2 {
             Some(i) => avg(image, i),
+            None => panic!("no second image"),
+        },
+        "switch\n" => match image2 {
+            Some(i) => switch_rows(image, i),
             None => panic!("no second image"),
         },
         "house\n" => draw_house(image),
