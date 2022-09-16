@@ -1,7 +1,7 @@
 use bmp;
 use std::io::{stdout, Write};
 
-fn draw_pixel(image: &bmp::Image) -> &bmp::Image {
+fn draw_pixel(mut image: bmp::Image) -> bmp::Image {
     image.set_pixel(50, 50, bmp::Pixel::new(255, 255, 255));
 
     return image;
@@ -23,7 +23,7 @@ fn main() {
     };
 
     image = match op.as_str() {
-        "pixel\n" => draw_pixel(&mut image),
+        "pixel\n" => draw_pixel(image),
         _ =>  {
             panic!("The operation {op} was not recognised!");
         },
