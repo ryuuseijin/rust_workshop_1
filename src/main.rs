@@ -34,6 +34,26 @@ fn draw_x(mut image: bmp::Image) -> bmp::Image {
     return image;
 }
 
+fn draw_square(mut image: bmp::Image, margin_left: u32, margin_right: u32, margin_top: u32, margin_bottom: u32) -> bmp::Image {
+
+    for (x, y) in image.coordinates() {
+        if (x == margin_left || x == margin_right) && y > margin_top && y < margin_bottom {
+            image.set_pixel(y, x, bmp::Pixel::new(255, 255, 255));
+        }
+        if (y == margin_top || y == margin_bottom) && x > margin_left && x < margin_right {
+            image.set_pixel(y, x, bmp::Pixel::new(255, 255, 255));
+        }
+    }
+
+    return image;
+}
+
+fn draw_house(image: bmp::Image) -> bmp::Image {
+    let width = image.get_width();
+    let height = image.get_height();
+    return draw_square(image, 10, width - 10, 10, height - 10);
+}
+
 fn avg(i1: bmp::Image, i2: bmp::Image) -> bmp::Image {
     if i1.get_width() != i2.get_width() || i1.get_height() != i2.get_height() {
         panic!("images not same size");
@@ -84,9 +104,10 @@ fn main() {
             Some(i) => avg(image, i),
             None => panic!("no second image"),
         },
-        _ => {
+        "house\n" => draw_house(image),
+        _ =>  {
             panic!("The operation {op} was not recognized!");
-        }
+        },
     };
 
     image.save(path).expect("This should save correctly.");
