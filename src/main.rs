@@ -25,9 +25,9 @@ fn main() {
     image = match op.as_str() {
         "pixel\n" => draw_pixel(&mut image),
         _ =>  {
-            eprintln!("The operation {op} was not recognised!");
+            eprintln!();
+            panic!("The operation {op} was not recognised!");
         },
-
     };
 
     image.save(path).expect("This should save correctly.");
