@@ -9,6 +9,7 @@ fn draw_pixel(image: &bmp::Image) -> &bmp::Image {
 
 fn main() {
     let path = std::env::args().nth(1).expect("You must provide a path.");
+    let path2 = std::env::args().nth(2);
 
     print!("Which operation? ");
     // We use "flush" so that we see the question before the answer.
