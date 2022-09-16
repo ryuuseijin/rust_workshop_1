@@ -25,7 +25,6 @@ fn main() {
     image = match op.as_str() {
         "pixel\n" => draw_pixel(&mut image),
         _ =>  {
-            eprintln!();
             panic!("The operation {op} was not recognised!");
         },
     };
