@@ -8,25 +8,20 @@ fn draw_pixel(mut image: bmp::Image) -> bmp::Image {
 }
 
 fn draw_diagonal(mut image: bmp::Image) -> bmp::Image {
-
     if image.get_width() != image.get_height() {
         panic!("canvas not square");
     }
-
 
     for (x, y) in image.coordinates() {
         if x == y {
             image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
         }
     }
-    
-    
+
     return image;
 }
 
-
 fn draw_x(mut image: bmp::Image) -> bmp::Image {
-
     for (x, y) in image.coordinates() {
         if x == y {
             image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
@@ -35,15 +30,24 @@ fn draw_x(mut image: bmp::Image) -> bmp::Image {
             image.set_pixel(y, x, bmp::Pixel::new(255, 255, 255));
         }
     }
-    
 
     return image;
 }
 
-
 fn main() {
     let path = std::env::args().nth(1).expect("You must provide a path.");
     let path2 = std::env::args().nth(2);
+    let args_numb = if path2.is_none() { 2 } else { 1 };
+    let mut image = match bmp::open(path.as_str()) {
+        Ok(i) => i,
+        Err(_) => bmp::Image::new(100, 100),
+    };
+    if args_numb == 2 {
+        let mut image2 = match bmp::open(path2.unwrap()) {
+            Ok(i) => i,
+            Err(_) => bmp::Image::new(100, 100),
+        };
+    }
 
     print!("Which operation? ");
     // We use "flush" so that we see the question before the answer.
@@ -52,18 +56,13 @@ fn main() {
     let mut op = String::new();
     std::io::stdin().read_line(&mut op).unwrap();
 
-    let mut image = match bmp::open(path.as_str()) {
-        Ok(i) => i,
-        Err(_) => bmp::Image::new(100, 100)
-    };
-
     image = match op.as_str() {
         "pixel\n" => draw_pixel(image),
         "diagonal\n" => draw_diagonal(image),
         "x\n" => draw_x(image),
-        _ =>  {
+        _ => {
             panic!("The operation {op} was not recognised!");
-        },
+        }
     };
 
     image.save(path).expect("This should save correctly.");
