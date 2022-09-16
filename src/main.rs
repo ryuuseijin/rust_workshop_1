@@ -108,7 +108,7 @@ fn avg(i1: bmp::Image, i2: bmp::Image) -> bmp::Image {
 
         image.set_pixel(x, y, bmp::Pixel::new(r, g, b));
     }
-    return image;
+    image
 }
 
 fn main() {
