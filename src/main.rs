@@ -7,6 +7,35 @@ fn draw_pixel(mut image: bmp::Image) -> bmp::Image {
     return image;
 }
 
+fn draw_diagonal(mut image: bmp::Image) -> bmp::Image {
+
+    for (x, y) in image.coordinates() {
+        if x == y {
+            image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
+        }
+    }
+    
+
+    return image;
+}
+
+
+fn draw_x(mut image: bmp::Image) -> bmp::Image {
+
+    for (x, y) in image.coordinates() {
+        if x == y {
+            image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
+        }
+        if image.get_width() - x == y {
+            image.set_pixel(y, x, bmp::Pixel::new(255, 255, 255));
+        }
+    }
+    
+
+    return image;
+}
+
+
 fn main() {
     let path = std::env::args().nth(1).expect("You must provide a path.");
 
@@ -24,6 +53,8 @@ fn main() {
 
     image = match op.as_str() {
         "pixel\n" => draw_pixel(image),
+        "diagonal\n" => draw_diagonal(image),
+        "x\n" => draw_x(image),
         _ =>  {
             panic!("The operation {op} was not recognised!");
         },
