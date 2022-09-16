@@ -7,13 +7,13 @@ fn draw_pixel(mut image: bmp::Image) -> bmp::Image {
     return image;
 }
 
-fn draw_diagonal(mut image: bmp::Image) -> bmp::Image {
+fn draw_left_top_to_right_bottom_diagonal(mut image: bmp::Image, x_from: u32, y_from: u32, x_to: u32, y_to: u32) -> bmp::Image {
     if image.get_width() != image.get_height() {
         panic!("canvas not square");
     }
 
     for (x, y) in image.coordinates() {
-        if x == y {
+        if x == y && x > x_from && x < x_to && y > y_from && y < y_to {
             image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
         }
     }
@@ -21,16 +21,31 @@ fn draw_diagonal(mut image: bmp::Image) -> bmp::Image {
     return image;
 }
 
-fn draw_x(mut image: bmp::Image) -> bmp::Image {
+fn draw_left_bottom_to_right_top_diagonal(mut image: bmp::Image, x_from: u32, y_from: u32, x_to: u32, y_to: u32) -> bmp::Image {
+    if image.get_width() != image.get_height() {
+        panic!("canvas not square");
+    }
+
     for (x, y) in image.coordinates() {
-        if x == y {
+        if image.get_width() - x == y && x > x_from && x < x_to && y < y_from && y > y_to {
             image.set_pixel(x, y, bmp::Pixel::new(255, 255, 255));
-        }
-        if image.get_width() - x == y {
-            image.set_pixel(y, x, bmp::Pixel::new(255, 255, 255));
         }
     }
 
+    return image;
+}
+
+fn draw_diagonal(mut image: bmp::Image) -> bmp::Image {
+    let width = image.get_width();
+    let height = image.get_height();
+    return draw_left_top_to_right_bottom_diagonal(image, 0, 0, width - 1, height - 1);
+}
+
+fn draw_x(mut image: bmp::Image) -> bmp::Image {
+    let width = image.get_width();
+    let height = image.get_height();
+    image = draw_left_top_to_right_bottom_diagonal(image, 0, 0, width - 1, height - 1);
+    image = draw_left_bottom_to_right_top_diagonal(image, 0, height - 1, width - 1, 0);
     return image;
 }
 
@@ -48,10 +63,15 @@ fn draw_square(mut image: bmp::Image, margin_left: u32, margin_right: u32, margi
     return image;
 }
 
-fn draw_house(image: bmp::Image) -> bmp::Image {
+fn draw_house(mut image: bmp::Image) -> bmp::Image {
     let width = image.get_width();
     let height = image.get_height();
-    return draw_square(image, 10, width - 10, 10, height - 10);
+
+    //XX
+    //image = draw_left_top_to_right_bottom_diagonal(image, width/2, 0, width - 10, );
+    //image = draw_left_bottom_to_right_top_diagonal(image, 0, height - 1, width - 1, 0);
+    image = draw_square(image, 10, width - 10, 10, height - 10);
+    return image;
 }
 
 fn avg(i1: bmp::Image, i2: bmp::Image) -> bmp::Image {
